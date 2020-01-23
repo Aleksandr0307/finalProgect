@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import model.DataContract;
 
 public class GetData {
-	public static final String FILE_NAME = "fp1.2";
+	public static final String FILE_NAME = "fp1.3";
 
 	public static DataContract findings() {
 		DataContract dataOrganization = new DataContract();

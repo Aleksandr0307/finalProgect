@@ -16,7 +16,7 @@ public class Contract extends Company implements Serializable {
 	private LocalDate beginningContract;
 	private LocalDate endContract;
 	private String rentalAddress;
-	private int rentalArea;
+	private double rentalArea;
 	private RoomType roomType;
 	private Boolean validityContract;
 	private Enum<?> ReductionFactor;
@@ -31,7 +31,7 @@ public class Contract extends Company implements Serializable {
 		private LocalDate beginningContract;
 		private LocalDate endContract;
 		private String rentalAddress;
-		private int rentalArea;
+		private double rentalArea;
 		private RoomType roomType;
 		private Boolean validityContract;
 		private Enum<?> ReductionFactor;
@@ -85,7 +85,7 @@ public class Contract extends Company implements Serializable {
 			return this;
 		}
 
-		public Builder rentalArea(int rentalArea) {
+		public Builder rentalArea(double rentalArea) {
 			this.rentalArea = rentalArea;
 			return this;
 		}
@@ -172,11 +172,11 @@ public class Contract extends Company implements Serializable {
 		this.rentalAddress = rentalAddress;
 	}
 
-	public int getRentalArea() {
+	public double getRentalArea() {
 		return rentalArea;
 	}
 
-	public void setRentalArea(int rentalArea) {
+	public void setRentalArea(double rentalArea) {
 		this.rentalArea = rentalArea;
 	}
 
@@ -218,7 +218,9 @@ public class Contract extends Company implements Serializable {
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((endContract == null) ? 0 : endContract.hashCode());
 		result = prime * result + ((rentalAddress == null) ? 0 : rentalAddress.hashCode());
-		result = prime * result + rentalArea;
+		long temp;
+		temp = Double.doubleToLongBits(rentalArea);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((roomType == null) ? 0 : roomType.hashCode());
 		result = prime * result + ((validityContract == null) ? 0 : validityContract.hashCode());
 		return result;
@@ -263,7 +265,7 @@ public class Contract extends Company implements Serializable {
 				return false;
 		} else if (!rentalAddress.equals(other.rentalAddress))
 			return false;
-		if (rentalArea != other.rentalArea)
+		if (Double.doubleToLongBits(rentalArea) != Double.doubleToLongBits(other.rentalArea))
 			return false;
 		if (roomType != other.roomType)
 			return false;

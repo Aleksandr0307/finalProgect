@@ -10,19 +10,21 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import model.Contract;
 import model.ReductionFactor;
 import model.RoomType;
 
 public class AddNewContractView {
 	private static LocalDate beginningContract;
-	static LocalDate endContract;
+	private static LocalDate endContract;
 
 	/**
 	 * @param primaryStage
@@ -30,6 +32,26 @@ public class AddNewContractView {
 	public static void newContract(Stage primaryStage) {
 
 		DatePicker dataPickerBeginingContract = new DatePicker();
+		DatePicker dataPickerEndContract = new DatePicker();
+
+		final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
+			@Override
+			public DateCell call(final DatePicker datePicker) {
+				return new DateCell() {
+					@Override
+					public void updateItem(LocalDate item, boolean empty) {
+						super.updateItem(item, empty);
+
+						if (item.isBefore(dataPickerBeginingContract.getValue().plusDays(1))) {
+							setDisable(true);
+							setStyle("-fx-background-color: #ffc0cb;");
+						}
+					}
+				};
+			}
+		};
+		dataPickerEndContract.setDayCellFactory(dayCellFactory);
+
 		dataPickerBeginingContract.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -38,13 +60,11 @@ public class AddNewContractView {
 			}
 		});
 
-		DatePicker dataPickerEndContract = new DatePicker();
 		dataPickerEndContract.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				endContract = dataPickerEndContract.getValue();
-
 			}
 		});
 
@@ -82,10 +102,10 @@ public class AddNewContractView {
 		TextField textDueDate = new TextField();
 
 		ComboBox<RoomType> boxRoomType = new ComboBox<>();
-		boxRoomType.getItems().addAll(RoomType.getRoomType());
+		boxRoomType.getItems().addAll(RoomType.values());
 
 		ComboBox<ReductionFactor> boxReductionFactor = new ComboBox<>();
-		boxReductionFactor.getItems().addAll(ReductionFactor.getReductionFactor());
+		boxReductionFactor.getItems().addAll(ReductionFactor.values());
 
 		Button addButton = new Button("Добавить");
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -100,8 +120,12 @@ public class AddNewContractView {
 						|| textRentalArea.getText().isEmpty() || boxRoomType.getValue().name().isEmpty()
 						|| boxReductionFactor.getValue().name().isEmpty() || textDueDate.getText().isEmpty()) {
 					messangh("Поля не заполнены");
+
 				} else if (endContract.isBefore(beginningContract)) {
 					messangh("Не верно указанны даты");
+				} else if (!textRentalArea.getText().matches("\\d+[\\.]*\\d*")) {
+					System.out.println(textRentalArea.getText().matches("\\d+(\\.\\d+)"));
+					messangh("Не корректное значение в поле: Площадь арендуемого помещения");
 				} else {
 					Contract newContract = new Contract();
 					newContract = new Contract.Builder().organization(textOrganization.getText())
@@ -109,7 +133,7 @@ public class AddNewContractView {
 							.phone(textPhone.getText()).contractNumber(textContractNumber.getText())
 							.beginningContract(beginningContract).endContract(endContract)
 							.rentalAddress(textRentalAddress.getText())
-							.rentalArea(Integer.parseInt(textRentalArea.getText())).roomType(boxRoomType.getValue())
+							.rentalArea(Double.parseDouble(textRentalArea.getText())).roomType(boxRoomType.getValue())
 							.reductionFactor(boxReductionFactor.getValue()).dueDate(textDueDate.getText()).build();
 					FirstWindow.dataOrganization.getDataOrganization().add(newContract);
 					FirstWindow.newStart(primaryStage);
