@@ -3,10 +3,12 @@ package model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * 
+ * Class Contract
+ */
 public class Contract extends Company implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -3445097661878667091L;
 
 	public Contract() {

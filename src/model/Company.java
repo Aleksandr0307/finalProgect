@@ -2,10 +2,12 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Class Company
+ *
+ */
 public class Company implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -4654106567792556946L;
 	private String organization;
 	private String legalAddress;

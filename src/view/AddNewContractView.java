@@ -7,7 +7,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
@@ -22,26 +21,26 @@ import model.Contract;
 import model.ReductionFactor;
 import model.RoomType;
 
+/**
+ * class for entering a new contract
+ */
 public class AddNewContractView {
 	private static LocalDate beginningContract;
 	private static LocalDate endContract;
 
-	/**
-	 * @param primaryStage
-	 */
 	public static void newContract(Stage primaryStage) {
 
 		DatePicker dataPickerBeginingContract = new DatePicker();
 		DatePicker dataPickerEndContract = new DatePicker();
 
-		final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
+		// setting date limit end of contract
+		final Callback<DatePicker, DateCell> endDayCellFactory = new Callback<DatePicker, DateCell>() {
 			@Override
 			public DateCell call(final DatePicker datePicker) {
 				return new DateCell() {
 					@Override
 					public void updateItem(LocalDate item, boolean empty) {
 						super.updateItem(item, empty);
-
 						if (item.isBefore(dataPickerBeginingContract.getValue().plusDays(1))) {
 							setDisable(true);
 							setStyle("-fx-background-color: #ffc0cb;");
@@ -50,18 +49,36 @@ public class AddNewContractView {
 				};
 			}
 		};
-		dataPickerEndContract.setDayCellFactory(dayCellFactory);
+		dataPickerEndContract.setDayCellFactory(endDayCellFactory);
 
+		// setting a limit on the start date of the contract
+		final Callback<DatePicker, DateCell> BeginDayCellFactory = new Callback<DatePicker, DateCell>() {
+			@Override
+			public DateCell call(final DatePicker datePicker) {
+				return new DateCell() {
+					@Override
+					public void updateItem(LocalDate item, boolean empty) {
+						super.updateItem(item, empty);
+						if (item.isAfter(dataPickerEndContract.getValue().minusDays(1))) {
+							setDisable(true);
+							setStyle("-fx-background-color: #ffc0cb;");
+						}
+					}
+				};
+			}
+		};
+		dataPickerBeginingContract.setDayCellFactory(BeginDayCellFactory);
+
+		// get contract start dates
 		dataPickerBeginingContract.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
 				beginningContract = dataPickerBeginingContract.getValue();
 			}
 		});
 
+		// get contract end dates
 		dataPickerEndContract.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
 				endContract = dataPickerEndContract.getValue();
@@ -69,24 +86,23 @@ public class AddNewContractView {
 		});
 
 		GridPane gridpane = new GridPane();
-		gridpane.getColumnConstraints().add(new ColumnConstraints(200));
 		gridpane.getColumnConstraints().add(new ColumnConstraints(250));
 		gridpane.setPadding(new Insets(10));
 		gridpane.setHgap(5);
 		gridpane.setVgap(5);
 
-		final Label labelOrganization = new Label("Организация");
-		final Label labelLegalAddress = new Label("Юридический адрес");
-		final Label labelContactPerson = new Label("Контактное лицо");
-		final Label labelPhone = new Label("Телефон");
-		final Label labelContractNumber = new Label("Номер договора");
-		final Label labelBeginningContract = new Label("Дата начала аренды");
-		final Label labelEndContract = new Label("Дата окончания аренды");
-		final Label labelRentalAddress = new Label("Адрес арендуемого помещения");
-		final Label labelRentalArea = new Label("Площадь арендуемого помещения");
-		final Label labelRoomType = new Label("Тип помещения");
-		final Label labelReductionFactor = new Label("Понижающий коэффициент");
-		final Label labelDueDate = new Label("Срок оплаты");
+		final Label labelOrganization = new Label("РћСЂРіР°РЅРёР·Р°С†РёСЏ");
+		final Label labelLegalAddress = new Label("Р®СЂРёРґРёС‡РµСЃРєРёР№ Р°РґСЂРµСЃ");
+		final Label labelContactPerson = new Label("РљРѕРЅС‚Р°РєС‚РЅРѕРµ Р»РёС†Рѕ");
+		final Label labelPhone = new Label("РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°");
+		final Label labelContractNumber = new Label("в„– РєРѕРЅС‚СЂР°РєС‚Р°");
+		final Label labelBeginningContract = new Label("Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РґРѕРіРѕРІРѕСЂР°");
+		final Label labelEndContract = new Label("Р”Р°С‚Р° РѕРєРѕРЅС‡Р°РЅРёСЏ РґРѕРіРѕРІРѕСЂР°");
+		final Label labelRentalAddress = new Label("РђРґСЂРµСЃ Р°СЂРµРЅРґСѓРµРјРѕРіРѕ РїРѕРјРµС‰РµРЅРёСЏ");
+		final Label labelRentalArea = new Label("РџР»РѕС‰Р°РґСЊ Р°СЂРµРЅРґСѓРµРјРѕРіРѕ РїРѕРјРµС‰РµРЅРёСЏ");
+		final Label labelRoomType = new Label("РўРёРї РїРѕРјРµС‰РµРЅРёСЏ");
+		final Label labelReductionFactor = new Label("РџРѕРЅРёР¶Р°СЋС‰РёР№ РєРѕСЌС„С„РёС†РёРµРЅС‚");
+		final Label labelDueDate = new Label("РЎСЂРѕРє РѕРїР»Р°С‚С‹ Р°СЂРµРЅРґС‹");
 
 		gridpane.addColumn(0, labelOrganization, labelLegalAddress, labelContactPerson, labelPhone, labelContractNumber,
 				labelBeginningContract, labelEndContract, labelRentalAddress, labelRentalArea, labelRoomType,
@@ -102,16 +118,20 @@ public class AddNewContractView {
 		TextField textDueDate = new TextField();
 
 		ComboBox<RoomType> boxRoomType = new ComboBox<>();
+		boxRoomType.setPrefWidth(200);
 		boxRoomType.getItems().addAll(RoomType.values());
 
 		ComboBox<ReductionFactor> boxReductionFactor = new ComboBox<>();
+		boxReductionFactor.setPrefWidth(200);
 		boxReductionFactor.getItems().addAll(ReductionFactor.values());
 
-		Button addButton = new Button("Добавить");
+		Button addButton = new Button("Р”РѕР±Р°РІРёС‚СЊ");
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
+
+				// checking fields for compliance and adding a new contract
 
 				if (textOrganization.getText().isEmpty() || textLegalAddress.getText().isEmpty()
 						|| textContactPerson.getText().isEmpty() || textPhone.getText().isEmpty()
@@ -119,13 +139,12 @@ public class AddNewContractView {
 						|| endContract.toString().isEmpty() || textRentalAddress.getText().isEmpty()
 						|| textRentalArea.getText().isEmpty() || boxRoomType.getValue().name().isEmpty()
 						|| boxReductionFactor.getValue().name().isEmpty() || textDueDate.getText().isEmpty()) {
-					messangh("Поля не заполнены");
-
-				} else if (endContract.isBefore(beginningContract)) {
-					messangh("Не верно указанны даты");
+					MessageError.messangh("Р—Р°РїРѕР»РЅРµРЅС‹ РЅРµ РІСЃРµ РїРѕР»СЏ");
+				} else if (beginningContract.isAfter(endContract)) {
+					MessageError.messangh("РќРµ РєРѕСЂСЂРµРєС‚РЅРѕ РІРІРµРґРµРЅС‹ РґР°С‚Р°");
 				} else if (!textRentalArea.getText().matches("\\d+[\\.]*\\d*")) {
 					System.out.println(textRentalArea.getText().matches("\\d+(\\.\\d+)"));
-					messangh("Не корректное значение в поле: Площадь арендуемого помещения");
+					MessageError.messangh("РќРµ РєРѕСЂСЂРµРєС‚РЅРѕ Р·Р°РїРѕР»РЅРµРЅРѕ РїРѕР»Рµ РџР»РѕС‰Р°РґСЊ Р°СЂРµРЅРґС‹.");
 				} else {
 					Contract newContract = new Contract();
 					newContract = new Contract.Builder().organization(textOrganization.getText())
@@ -135,13 +154,14 @@ public class AddNewContractView {
 							.rentalAddress(textRentalAddress.getText())
 							.rentalArea(Double.parseDouble(textRentalArea.getText())).roomType(boxRoomType.getValue())
 							.reductionFactor(boxReductionFactor.getValue()).dueDate(textDueDate.getText()).build();
-					FirstWindow.dataOrganization.getDataOrganization().add(newContract);
+					FirstWindow.getDataOrganization().getDataOrganization().add(newContract);
 					FirstWindow.newStart(primaryStage);
 				}
 			}
 		});
 
-		Button exitButton = new Button("Отмена");
+		// Cancel button -> return to the FirstWindow screen
+		Button exitButton = new Button("РћС‚РјРµРЅР°");
 		exitButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -162,18 +182,10 @@ public class AddNewContractView {
 		Scene scene = new Scene(gridpane);
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
-		primaryStage.setTitle("Ввод нового договора");
+		primaryStage.setTitle("РќРѕРІС‹Р№ РґРѕРіРѕРІРѕСЂ");
 		primaryStage.setResizable(false);
 		primaryStage.show();
 
 	}
 
-	public static void messangh(String string) {
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.setTitle("ERROR");
-		alert.setHeaderText(null);
-		alert.setContentText(string);
-		alert.showAndWait();
-
-	}
 }

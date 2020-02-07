@@ -6,34 +6,46 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import model.DataContract;
 
+/**
+ * class for get an object DataContract, if absent creates and writes a new
+ * object
+ *
+ */
 public class GetData {
-	public static final String FILE_NAME = "fp1.3";
 
-	public static DataContract findings() {
+	public static final Logger log = LogManager.getLogger(GetData.class);
+
+	public static DataContract findings(File file) {
+
 		DataContract dataOrganization = new DataContract();
-		File file = new File(FILE_NAME);
 		FileInputStream fis = null;
 		ObjectInputStream oin = null;
 
 		try {
 			if (file.createNewFile()) {
-				SendData.sendData(dataOrganization);
-				System.out.println("װאיכ " + file.getName() + " סמחהאם ג " + file.getAbsolutePath());
+				SendData.sendData(dataOrganization, file);
 			} else {
 				try {
-					fis = new FileInputStream(FILE_NAME);
+					fis = new FileInputStream(file);
 					oin = new ObjectInputStream(fis);
 					dataOrganization = (DataContract) oin.readObject();
-					oin.close();
-					fis.close();
 				} catch (FileNotFoundException e) {
+					log.error("File write error FileNotFoundException");
 					e.printStackTrace();
 				} catch (IOException e) {
+					log.error("File write error IOException");
 					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
+					log.error("File write error ClassNotFoundException");
 					e.printStackTrace();
+				} finally {
+					oin.close();
+					fis.close();
 				}
 			}
 
@@ -42,7 +54,5 @@ public class GetData {
 		}
 
 		return dataOrganization;
-
 	}
-
 }

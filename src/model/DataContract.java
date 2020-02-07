@@ -4,6 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import kontroller.GetData;
+
+/**
+ * class for storing the list of concluded contracts
+ * 
+ * @see Contract
+ * @see GetData
+ * @see Sendata
+ */
 public class DataContract implements Serializable {
 
 	private static final long serialVersionUID = -5784657253801287876L;
